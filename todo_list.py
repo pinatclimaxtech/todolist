@@ -1,20 +1,36 @@
-todo_list = {}
+import io
+import signal
+
+todo_list = []
 todoIndex = 0
+
+def handler(signum, frame):
+    exit (0)
+
+signal.signal(signal.SIGINT, handler)
 
 def add_todo_list(newJob):
     global todoIndex
     todoIndex += 1
-    todo_list[str(todoIndex)] = newJob
+    todo_list.append(newJob)
 
 def remove_todo_list(jobNo):
-    del todo_list[jobNo]
+    todo_list.pop(int(jobNo)-1)
     return todo_list
 
 def print_todo_list():
+    buffer = io.StringIO()
     print('list your todo here')
     print('-------------------')
-    for key in todo_list:
-        print(key, "->"  ,todo_list[key])
+    for index, item in enumerate(todo_list):
+        buffer.write(str(index+1))
+        buffer.write(". ")
+        buffer.write(item)
+        if len(todo_list) != index+1:
+            buffer.write("\n")
+
+    print(buffer.getvalue())
+    print('-------------------')
 
 
 while True:
@@ -29,3 +45,5 @@ while True:
         delAJob = input("input job number here\n")
         remove_todo_list(delAJob)
         print_todo_list()
+
+
